@@ -6,16 +6,22 @@ st.set_page_config(page_title="CTH - Gestão Escolar & Desempenho", layout="wide
 
 # Cabeçalho Principal
 st.title("🏫 Colégio Teixeira Holanda")
-st.subtitle("Sistema de Gestão de Desempenho e Diagnóstico Pedagógico")
+st.subheader("Sistema de Gestão de Desempenho e Diagnóstico Pedagógico")
 
 # Sidebar - Controle de Períodos e Upload
 st.sidebar.header("⚙️ Painel de Controle")
-etapa_selecionada = st.sidebar.selectbox("Selecione o Período de Análise", ["2ª Etapa", "1ª Etapa", "Comparativo 1ª x 2ª", "3ª Etapa (Novo)"])
+etapa_selecionada = st.sidebar.selectbox(
+    "Selecione o Período de Análise", 
+    ["2ª Etapa", "1ª Etapa", "Comparativo 1ª x 2ª", "3ª Etapa (Novo)"]
+)
 
 # Upload de novos boletins/notas do 3º Período
 st.sidebar.markdown("---")
 st.sidebar.subheader("📥 Atualizar Notas do Período")
-uploaded_file = st.sidebar.file_uploader("Enviar Boletins/Planilha do 3º Período (PDF ou Excel)", type=["pdf", "xlsx"])
+uploaded_file = st.sidebar.file_uploader(
+    "Enviar Boletins/Planilha do 3º Período (PDF ou Excel)", 
+    type=["pdf", "xlsx"]
+)
 
 if uploaded_file:
     st.sidebar.success("Arquivo recebido com sucesso! Processando notas...")
@@ -29,16 +35,19 @@ col4.metric("Risco de Reprovação", "3 Alunos", "3+ matérias < 5,0")
 
 st.markdown("---")
 
-# Abas Interativas
-tab1, tab2, tab3 = st.columns([1, 1, 1])
-
 # Formulário para entrada manual de notas adicionais
-with st.expansander("📝 Inserir / Editar Notas do 3º Período Manualmente"):
+with st.expander("📝 Inserir / Editar Notas do 3º Período Manualmente"):
     with st.form("form_notas"):
         c1, c2, c3 = st.columns(3)
         aluno_nome = c1.text_input("Nome do Aluno")
-        turma_aluno = c2.selectbox("Turma", ["6º ANO/M", "6º ANO/T", "7º ANO/M", "7º ANO/T", "8º ANO/M", "9º ANO/M"])
-        disciplina = c3.selectbox("Disciplina", ["Matemática", "Português", "História", "Geografia", "Ciências", "Inglês", "Filosofia", "Artes"])
+        turma_aluno = c2.selectbox(
+            "Turma", 
+            ["6º ANO/M", "6º ANO/T", "7º ANO/M", "7º ANO/T", "8º ANO/M", "9º ANO/M"]
+        )
+        disciplina = c3.selectbox(
+            "Disciplina", 
+            ["Matemática", "Português", "História", "Geografia", "Ciências", "Inglês", "Filosofia", "Artes"]
+        )
         
         n1, n2 = st.columns(2)
         nota_3_etapa = n1.number_input("Nota Média 3ª Etapa", min_value=0.0, max_value=10.0, value=7.0)
