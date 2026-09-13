@@ -21,67 +21,20 @@ st.markdown("""
 st.markdown('<div class="main-title">🏫 Colégio Teixeira Holanda</div>', unsafe_allow_html=True)
 st.markdown('<div class="sub-title">Sistema Integrado de Gestão de Desempenho e Diagnóstico Pedagógico</div>', unsafe_allow_html=True)
 
-# --- DADOS BASEADOS NO BANCO AUDITADO ---
-data_turmas = pd.DataFrame({
-    'Turma': ['6º ANO/M', '6º ANO/T', '7º ANO/M', '7º ANO/T', '8º ANO/M', '9º ANO/M'],
-    'Total_Alunos': [36, 36, 26, 16, 31, 18],
-    'Sem_RP_1': [4, 3, 5, 1, 5, 2],
-    'Sem_RP_2': [2, 2, 6, 1, 8, 5],
-    'Com_RP_1': [32, 33, 21, 15, 26, 16],
-    'Com_RP_2': [34, 34, 20, 15, 23, 13],
-    'Risco_Reprov_1': [4, 3, 1, 2, 1, 0],
-    'Risco_Reprov_2': [1, 2, 0, 0, 0, 0],
-    'Media_Orig_1': [7.21, 7.09, 7.72, 6.56, 7.69, 7.61],
-    'Media_Orig_2': [7.49, 7.65, 8.18, 7.34, 8.38, 8.08]
-})
+# --- CARREGAR BASE COMPLETA DE ALUNOS ---
+@st.cache_data
+def load_data():
+    try:
+        df = pd.read_csv("boletins_completos.csv")
+        return df
+    except:
+        return pd.DataFrame()
 
-data_ranking_2 = pd.DataFrame({
-    'Disciplina': ['Matemática', 'História', 'Química', 'Filosofia', 'Inglês', 'Geografia', 'Ciências', 'Artes', 'Ed. Física', 'Português', 'Biologia', 'Redação', 'Of. Negócios', 'Física', 'Literatura'],
-    'Total_Alunos': [163, 163, 49, 163, 163, 163, 145, 163, 163, 163, 49, 163, 163, 49, 163],
-    'Alunos_em_RP': [123, 80, 23, 72, 41, 41, 28, 25, 23, 16, 3, 8, 7, 1, 1]
-})
-data_ranking_2['Pct_RP'] = (data_ranking_2['Alunos_em_RP'] / data_ranking_2['Total_Alunos']) * 100
-
-data_ranking_1 = pd.DataFrame({
-    'Disciplina': ['Matemática', 'História', 'Inglês', 'Artes', 'Filosofia', 'Geografia', 'Português', 'Ciências', 'Ed. Física', 'Redação'],
-    'Total_Alunos': [163, 163, 163, 163, 163, 163, 145, 163, 163, 163],
-    'Alunos_em_RP': [106, 100, 80, 66, 64, 45, 38, 32, 28, 20]
-})
-data_ranking_1['Pct_RP'] = (data_ranking_1['Alunos_em_RP'] / data_ranking_1['Total_Alunos']) * 100
-
-df_risco_2 = pd.DataFrame([
-    {"Aluno": "DAVI DA SILVA LIMA", "Turma": "6º ANO/T", "Disciplinas_Abaixo5": 4, "RPs_Iniciais": 10, "RPs_Recuperadas": 4, "RPs_Finais": 6, "Media_Final": 5.88},
-    {"Aluno": "FERNANDO ADRIAN FEITOSA TORRES", "Turma": "6º ANO/T", "Disciplinas_Abaixo5": 4, "RPs_Iniciais": 9, "RPs_Recuperadas": 1, "RPs_Finais": 8, "Media_Final": 5.75},
-    {"Aluno": "JULIA VIEIRA LIMA", "Turma": "6º ANO/M", "Disciplinas_Abaixo5": 3, "RPs_Iniciais": 7, "RPs_Recuperadas": 2, "RPs_Finais": 5, "Media_Final": 5.98}
-])
-
-df_risco_1 = pd.DataFrame([
-    {"Aluno": "GUILHERME KLAIVER SOUSA MORAIS", "Turma": "9º ANO/M", "Disciplinas_Abaixo5": 4, "RPs_Iniciais": 11, "RPs_Recuperadas": 4, "RPs_Finais": 7, "Media_Final": 6.39},
-    {"Aluno": "CLARISSA TEIXEIRA DE HOLANDA", "Turma": "8º ANO/M", "Disciplinas_Abaixo5": 4, "RPs_Iniciais": 10, "RPs_Recuperadas": 3, "RPs_Finais": 7, "Media_Final": 6.37},
-    {"Aluno": "PEDRO IGOR LIMA DOS SANTOS", "Turma": "6º ANO/M", "Disciplinas_Abaixo5": 4, "RPs_Iniciais": 9, "RPs_Recuperadas": 2, "RPs_Finais": 7, "Media_Final": 6.17},
-    {"Aluno": "MARIA ISIS ANASTACIO PEREIRA", "Turma": "6º ANO/M", "Disciplinas_Abaixo5": 5, "RPs_Iniciais": 9, "RPs_Recuperadas": 3, "RPs_Finais": 6, "Media_Final": 5.92},
-    {"Aluno": "JOSE EDUARDO FURTADO BANDEIRA JUNIOR", "Turma": "6º ANO/M", "Disciplinas_Abaixo5": 4, "RPs_Iniciais": 9, "RPs_Recuperadas": 2, "RPs_Finais": 7, "Media_Final": 5.90},
-    {"Aluno": "DAVI DA SILVA LIMA", "Turma": "6º ANO/T", "Disciplinas_Abaixo5": 4, "RPs_Iniciais": 9, "RPs_Recuperadas": 3, "RPs_Finais": 6, "Media_Final": 5.85},
-    {"Aluno": "FERNANDO ADRIAN FEITOSA TORRES", "Turma": "6º ANO/T", "Disciplinas_Abaixo5": 4, "RPs_Iniciais": 8, "RPs_Recuperadas": 1, "RPs_Finais": 7, "Media_Final": 5.70},
-    {"Aluno": "JULIA VIEIRA LIMA", "Turma": "6º ANO/M", "Disciplinas_Abaixo5": 3, "RPs_Iniciais": 6, "RPs_Recuperadas": 1, "RPs_Finais": 5, "Media_Final": 5.80},
-    {"Aluno": "EMILLY VITORIA OLIVEIRA DE SOUZA", "Turma": "7º ANO/T", "Disciplinas_Abaixo5": 3, "RPs_Iniciais": 5, "RPs_Recuperadas": 0, "RPs_Finais": 5, "Media_Final": 6.12},
-    {"Aluno": "ANTONIO LUCAS BARBOSA DA SILVA", "Turma": "9º ANO/M", "Disciplinas_Abaixo5": 3, "RPs_Iniciais": 6, "RPs_Recuperadas": 2, "RPs_Finais": 4, "Media_Final": 6.42},
-    {"Aluno": "KALLEB SILVA DE ALMEIDA", "Turma": "6º ANO/M", "Disciplinas_Abaixo5": 3, "RPs_Iniciais": 8, "RPs_Recuperadas": 1, "RPs_Finais": 7, "Media_Final": 6.20}
-])
-
-df_boletim_aluno_davi = pd.DataFrame({
-    'Disciplina': ['Matemática', 'História', 'Geografia', 'Português', 'Ciências', 'Inglês', 'Filosofia', 'Artes', 'Ed. Física', 'Redação', 'Literatura', 'Oficina de Negócios'],
-    'Media_1': [5.5, 3.0, 5.0, 5.5, 6.5, 4.0, 4.0, 5.0, 4.5, 7.0, 8.0, 4.0],
-    'RP_1': [4.5, 0.0, 2.0, 7.0, 6.0, 2.0, 3.0, 6.0, 4.0, 7.0, 8.0, 7.5],
-    'Media_2': [5.0, 5.5, 5.0, 6.5, 7.0, 7.0, 4.0, 6.0, 4.0, 7.0, 8.0, 4.0],
-    'RP_2': [1.0, 4.0, 7.0, 8.5, 0.0, 0.0, 3.0, 7.0, 4.5, 0.0, 0.0, 7.5]
-})
-df_boletim_aluno_davi['Final_1'] = df_boletim_aluno_davi.apply(lambda r: max(r['Media_1'], r['RP_1']), axis=1)
-df_boletim_aluno_davi['Final_2'] = df_boletim_aluno_davi.apply(lambda r: max(r['Media_2'], r['RP_2']), axis=1)
+df_boletim_full = load_data()
 
 # --- SIDEBAR: CONTROLE DE ANÁLISE ---
 st.sidebar.header("⚙️ Painel de Controle")
-modo_visao = st.sidebar.radio("Modo de Exibição", ["Visão Geral / Turmas", "👤 Análise por Aluno (Individual)"])
+modo_visao = st.sidebar.radio("Modo de Exibição", ["Visão Geral / Turmas", "👤 Análise por Aluno (Todos os 163 Alunos)"])
 
 if modo_visao == "Visão Geral / Turmas":
     etapa_sel = st.sidebar.selectbox(
@@ -98,6 +51,54 @@ if modo_visao == "Visão Geral / Turmas":
 
     if uploaded_file:
         st.sidebar.success("Arquivo recebido com sucesso! Processando notas...")
+
+    # Dados das Turmas
+    data_turmas = pd.DataFrame({
+        'Turma': ['6º ANO/M', '6º ANO/T', '7º ANO/M', '7º ANO/T', '8º ANO/M', '9º ANO/M'],
+        'Total_Alunos': [36, 36, 26, 16, 31, 18],
+        'Sem_RP_1': [4, 3, 5, 1, 5, 2],
+        'Sem_RP_2': [2, 2, 6, 1, 8, 5],
+        'Com_RP_1': [32, 33, 21, 15, 26, 16],
+        'Com_RP_2': [34, 34, 20, 15, 23, 13],
+        'Risco_Reprov_1': [4, 3, 1, 2, 1, 0],
+        'Risco_Reprov_2': [1, 2, 0, 0, 0, 0],
+        'Media_Orig_1': [7.21, 7.09, 7.72, 6.56, 7.69, 7.61],
+        'Media_Orig_2': [7.49, 7.65, 8.18, 7.34, 8.38, 8.08]
+    })
+
+    data_ranking_2 = pd.DataFrame({
+        'Disciplina': ['Matemática', 'História', 'Química', 'Filosofia', 'Inglês', 'Geografia', 'Ciências', 'Artes', 'Ed. Física', 'Português', 'Biologia', 'Redação', 'Of. Negócios', 'Física', 'Literatura'],
+        'Total_Alunos': [163, 163, 49, 163, 163, 163, 145, 163, 163, 163, 49, 163, 163, 49, 163],
+        'Alunos_em_RP': [123, 80, 23, 72, 41, 41, 28, 25, 23, 16, 3, 8, 7, 1, 1]
+    })
+    data_ranking_2['Pct_RP'] = (data_ranking_2['Alunos_em_RP'] / data_ranking_2['Total_Alunos']) * 100
+
+    data_ranking_1 = pd.DataFrame({
+        'Disciplina': ['Matemática', 'História', 'Inglês', 'Artes', 'Filosofia', 'Geografia', 'Português', 'Ciências', 'Ed. Física', 'Redação'],
+        'Total_Alunos': [163, 163, 163, 163, 163, 163, 145, 163, 163, 163],
+        'Alunos_em_RP': [106, 100, 80, 66, 64, 45, 38, 32, 28, 20]
+    })
+    data_ranking_1['Pct_RP'] = (data_ranking_1['Alunos_em_RP'] / data_ranking_1['Total_Alunos']) * 100
+
+    df_risco_2 = pd.DataFrame([
+        {"Aluno": "DAVI DA SILVA LIMA", "Turma": "6º ANO/T", "Disciplinas_Abaixo5": 4, "RPs_Iniciais": 10, "RPs_Recuperadas": 4, "RPs_Finais": 6, "Media_Final": 5.88},
+        {"Aluno": "FERNANDO ADRIAN FEITOSA TORRES", "Turma": "6º ANO/T", "Disciplinas_Abaixo5": 4, "RPs_Iniciais": 9, "RPs_Recuperadas": 1, "RPs_Finais": 8, "Media_Final": 5.75},
+        {"Aluno": "JULIA VIEIRA LIMA", "Turma": "6º ANO/M", "Disciplinas_Abaixo5": 3, "RPs_Iniciais": 7, "RPs_Recuperadas": 2, "RPs_Finais": 5, "Media_Final": 5.98}
+    ])
+
+    df_risco_1 = pd.DataFrame([
+        {"Aluno": "GUILHERME KLAIVER SOUSA MORAIS", "Turma": "9º ANO/M", "Disciplinas_Abaixo5": 4, "RPs_Iniciais": 11, "RPs_Recuperadas": 4, "RPs_Finais": 7, "Media_Final": 6.39},
+        {"Aluno": "CLARISSA TEIXEIRA DE HOLANDA", "Turma": "8º ANO/M", "Disciplinas_Abaixo5": 4, "RPs_Iniciais": 10, "RPs_Recuperadas": 3, "RPs_Finais": 7, "Media_Final": 6.37},
+        {"Aluno": "PEDRO IGOR LIMA DOS SANTOS", "Turma": "6º ANO/M", "Disciplinas_Abaixo5": 4, "RPs_Iniciais": 9, "RPs_Recuperadas": 2, "RPs_Finais": 7, "Media_Final": 6.17},
+        {"Aluno": "MARIA ISIS ANASTACIO PEREIRA", "Turma": "6º ANO/M", "Disciplinas_Abaixo5": 5, "RPs_Iniciais": 9, "RPs_Recuperadas": 3, "RPs_Finais": 6, "Media_Final": 5.92},
+        {"Aluno": "JOSE EDUARDO FURTADO BANDEIRA JUNIOR", "Turma": "6º ANO/M", "Disciplinas_Abaixo5": 4, "RPs_Iniciais": 9, "RPs_Recuperadas": 2, "RPs_Finais": 7, "Media_Final": 5.90},
+        {"Aluno": "DAVI DA SILVA LIMA", "Turma": "6º ANO/T", "Disciplinas_Abaixo5": 4, "RPs_Iniciais": 9, "RPs_Recuperadas": 3, "RPs_Finais": 6, "Media_Final": 5.85},
+        {"Aluno": "FERNANDO ADRIAN FEITOSA TORRES", "Turma": "6º ANO/T", "Disciplinas_Abaixo5": 4, "RPs_Iniciais": 8, "RPs_Recuperadas": 1, "RPs_Finais": 7, "Media_Final": 5.70},
+        {"Aluno": "JULIA VIEIRA LIMA", "Turma": "6º ANO/M", "Disciplinas_Abaixo5": 3, "RPs_Iniciais": 6, "RPs_Recuperadas": 1, "RPs_Finais": 5, "Media_Final": 5.80},
+        {"Aluno": "EMILLY VITORIA OLIVEIRA DE SOUZA", "Turma": "7º ANO/T", "Disciplinas_Abaixo5": 3, "RPs_Iniciais": 5, "RPs_Recuperadas": 0, "RPs_Finais": 5, "Media_Final": 6.12},
+        {"Aluno": "ANTONIO LUCAS BARBOSA DA SILVA", "Turma": "9º ANO/M", "Disciplinas_Abaixo5": 3, "RPs_Iniciais": 6, "RPs_Recuperadas": 2, "RPs_Finais": 4, "Media_Final": 6.42},
+        {"Aluno": "KALLEB SILVA DE ALMEIDA", "Turma": "6º ANO/M", "Disciplinas_Abaixo5": 3, "RPs_Iniciais": 8, "RPs_Recuperadas": 1, "RPs_Finais": 7, "Media_Final": 6.20}
+    ])
 
     df_t_filtered = data_turmas if turma_sel == "Todas as Turmas" else data_turmas[data_turmas['Turma'] == turma_sel]
 
@@ -217,43 +218,80 @@ if modo_visao == "Visão Geral / Turmas":
         st.info("💡 Módulo de Cadastro da 3ª Etapa ativo. Utilize o formulário abaixo ou faça o upload do arquivo para incluir novas notas.")
 
 else:
-    # MODALIDADE: ANÁLISE POR ALUNO INDIVIDUAL
+    # MODALIDADE: ANÁLISE POR ALUNO INDIVIDUAL (TODOS OS 163 ALUNOS)
     st.subheader("👤 Ficha de Acompanhamento Individualizado do Estudante")
     
-    lista_alunos = [
-        "DAVI DA SILVA LIMA (6º ANO/T)",
-        "FERNANDO ADRIAN FEITOSA TORRES (6º ANO/T)",
-        "JULIA VIEIRA LIMA (6º ANO/M)",
-        "JOSE EDUARDO FURTADO BANDEIRA JUNIOR (6º ANO/M)",
-        "GUILHERME KLAIVER SOUSA MORAIS (9º ANO/M)",
-        "CLARISSA TEIXEIRA DE HOLANDA (8º ANO/M)"
-    ]
-    aluno_selecionado = st.sidebar.selectbox("Selecione o Aluno para Diagnóstico", lista_alunos)
-    
-    st.markdown(f"### **Estudante:** `{aluno_selecionado}`")
-    
-    c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Turma", "6º ANO/T")
-    c2.metric("RPs Iniciais (2ª Etapa)", "10 Disciplinas", "Alerta RPs")
-    c3.metric("RPs Recuperadas", "4 Disciplinas", "40% Reversão")
-    c4.metric("Média Final 2ª Etapa", "5.88", "+0.03 vs 1ª Etapa")
-    
-    st.markdown("---")
-    st.subheader("📊 Evolução de Notas Por Disciplina (1ª vs 2ª Etapa)")
-    
-    fig_aluno = px.bar(
-        df_boletim_aluno_davi, x='Disciplina', y=['Final_1', 'Final_2'],
-        barmode='group', title=f"Boletim Comparativo: {aluno_selecionado}",
-        labels={'value': 'Nota Final', 'variable': 'Etapa'},
-        color_discrete_map={'Final_1': '#94A3B8', 'Final_2': '#1E3A8A'}
-    )
-    fig_aluno.add_shape(type="line", x0=-0.5, x1=11.5, y0=7.0, y1=7.0, line=dict(color="Green", width=2, dash="dash"))
-    fig_aluno.add_shape(type="line", x0=-0.5, x1=11.5, y0=5.0, y1=5.0, line=dict(color="Red", width=2, dash="dash"))
-    
-    st.plotly_chart(fig_aluno, use_container_width=True)
-    
-    st.subheader("📋 Tabela Detalhada do Aluno")
-    st.dataframe(df_boletim_aluno_davi, use_container_width=True)
+    if not df_boletim_full.empty:
+        df_boletim_full['aluno_turma_label'] = df_boletim_full['aluno'] + " (" + df_boletim_full['turma'] + ")"
+        lista_alunos_completa = sorted(df_boletim_full['aluno_turma_label'].unique())
+        
+        # Filtro de turma para facilitar busca
+        st.sidebar.subheader("🔍 Filtrar Lista de Alunos")
+        turma_filtro_aluno = st.sidebar.selectbox("Filtrar por Turma", ["Todas as Turmas", "6º ANO/M", "6º ANO/T", "7º ANO/M", "7º ANO/T", "8º ANO/M", "9º ANO/M"], key="flt_st")
+        
+        if turma_filtro_aluno != "Todas as Turmas":
+            lista_alunos_exibir = sorted(df_boletim_full[df_boletim_full['turma'] == turma_filtro_aluno]['aluno_turma_label'].unique())
+        else:
+            lista_alunos_exibir = lista_alunos_completa
+            
+        aluno_selecionado = st.sidebar.selectbox(
+            f"Selecione um Aluno ({len(lista_alunos_exibir)} disponíveis)", 
+            lista_alunos_exibir
+        )
+        
+        # Extrair dados do aluno selecionado
+        df_aluno = df_boletim_full[df_boletim_full['aluno_turma_label'] == aluno_selecionado].copy()
+        
+        if not df_aluno.empty:
+            nome_aluno = df_aluno['aluno'].iloc[0]
+            turma_aluno = df_aluno['turma'].iloc[0]
+            
+            st.markdown(f"### **Estudante:** `{nome_aluno}` | **Turma:** `{turma_aluno}`")
+            
+            # Métricas do Aluno
+            rps_iniciais_2 = (df_aluno['media_2'] < 7.0).sum()
+            rps_recuperadas_2 = ((df_aluno['media_2'] < 7.0) & (df_aluno['final_2'] >= 7.0)).sum()
+            rps_finais_2 = ((df_aluno['media_2'] < 7.0) & (df_aluno['final_2'] < 7.0)).sum()
+            abaixo_5_cnt = (df_aluno['final_2'] < 5.0).sum()
+            media_geral_2 = df_aluno['final_2'].mean()
+            
+            c1, c2, c3, c4 = st.columns(4)
+            c1.metric("RPs Iniciais (2ª Etapa)", f"{rps_iniciais_2} Disciplinas")
+            c2.metric("RPs Recuperadas", f"{rps_recuperadas_2} Disciplinas")
+            c3.metric("RPs Remanescentes", f"{rps_finais_2} Disciplinas", f"{abaixo_5_cnt} abaixo de 5,0", delta_color="inverse")
+            c4.metric("Média Geral (2ª Etapa)", f"{media_geral_2:.2f}")
+            
+            st.markdown("---")
+            st.subheader("📊 Comparativo de Desempenho por Disciplina (1ª Etapa vs 2ª Etapa)")
+            
+            fig_aluno = px.bar(
+                df_aluno, x='disciplina', y=['final_1', 'final_2'],
+                barmode='group',
+                title=f"Boletim Comparativo: {nome_aluno}",
+                labels={'value': 'Nota Final', 'variable': 'Etapa', 'disciplina': 'Disciplina'},
+                color_discrete_map={'final_1': '#94A3B8', 'final_2': '#1E3A8A'}
+            )
+            fig_aluno.add_shape(type="line", x0=-0.5, x1=len(df_aluno)-0.5, y0=7.0, y1=7.0, line=dict(color="Green", width=2, dash="dash"))
+            fig_aluno.add_shape(type="line", x0=-0.5, x1=len(df_aluno)-0.5, y0=5.0, y1=5.0, line=dict(color="Red", width=2, dash="dash"))
+            
+            st.plotly_chart(fig_aluno, use_container_width=True)
+            
+            st.subheader("📋 Tabela Detalhada de Notas do Estudante")
+            st.dataframe(
+                df_aluno[['disciplina', 'media_1', 'rp_1', 'final_1', 'media_2', 'rp_2', 'final_2', 'total_pontos']].rename(
+                    columns={
+                        'disciplina': 'Disciplina',
+                        'media_1': 'Média Orig. 1ª',
+                        'rp_1': 'RP 1ª',
+                        'final_1': 'Final 1ª',
+                        'media_2': 'Média Orig. 2ª',
+                        'rp_2': 'RP 2ª',
+                        'final_2': 'Final 2ª',
+                        'total_pontos': 'Total Pontos'
+                    }
+                ),
+                use_container_width=True
+            )
 
 # --- FORMULÁRIO DE ENTRADA MANUAL ---
 st.markdown("---")
