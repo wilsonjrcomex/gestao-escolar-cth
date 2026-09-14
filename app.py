@@ -70,7 +70,7 @@ df_boletim_full = load_full_data()
 # --- SIDEBAR DE CONTROLE INSTITUCIONAL ---
 st.sidebar.markdown(f"""
 <div style="text-align: center; margin-bottom: 15px;">
-    <img src="data:image/png;base64,{{LOGO_B64}}" width="130">
+    <img src="data:image/png;base64,{LOGO_B64}" width="130">
     <p style="font-weight: 700; color: #0033CC; margin-top: 8px; margin-bottom: 0px;">PAINEL DE CONTROLE</p>
     <p style="font-size: 0.8rem; color: #6B7280;">Gestão & Diagnóstico 2026</p>
 </div>
@@ -198,7 +198,7 @@ with tabs[1]:
         media_final=(col_final if not is_comparativo else 'final_2', 'mean')
     ).reset_index()
     
-    al_rp_turma = df_filtered[df_filtered[col_em_rp if not is_comparativo else 'em_rp_2']].groupby('turma')['aluno'].nunique().reset_index().rename(columns={{'aluno': 'alunos_em_rp'}})
+    al_rp_turma = df_filtered[df_filtered[col_em_rp if not is_comparativo else 'em_rp_2']].groupby('turma')['aluno'].nunique().reset_index().rename(columns={'aluno': 'alunos_em_rp'})
     df_diag_turma = pd.merge(df_diag_turma, al_rp_turma, on='turma', how='left').fillna(0)
     df_diag_turma['pct_alunos_rp'] = (df_diag_turma['alunos_em_rp'] / df_diag_turma['alunos']) * 100
     
@@ -206,18 +206,18 @@ with tabs[1]:
     
     with col_diag1:
         st.dataframe(
-            df_diag_turma.rename(columns={{
+            df_diag_turma.rename(columns={
                 'turma': 'Turma',
                 'alunos': 'Total Alunos',
                 'media_original': 'Média 1ª Etapa' if is_comparativo else 'Média Original',
                 'media_final': 'Média 2ª Etapa' if is_comparativo else 'Média Final',
                 'alunos_em_rp': 'Alunos em RP',
                 'pct_alunos_rp': '% Alunos em RP'
-            }}).style.format({{
-                'Média 1ª Etapa' if is_comparativo else 'Média Original': '{{:.2f}}',
-                'Média 2ª Etapa' if is_comparativo else 'Média Final': '{{:.2f}}',
-                '% Alunos em RP': '{{:.1f}}%'
-            }}),
+            }).style.format({
+                'Média 1ª Etapa' if is_comparativo else 'Média Original': '{:.2f}',
+                'Média 2ª Etapa' if is_comparativo else 'Média Final': '{:.2f}',
+                '% Alunos em RP': '{:.1f}%'
+            }),
             use_container_width=True
         )
         
@@ -242,8 +242,8 @@ with tabs[2]:
     
     ca1, ca2, ca3, ca4 = st.columns(4)
     ca1.metric("ALUNOS COM AVALIAÇÃO ADAPTADA", df_adaptados['aluno'].nunique(), "17.8% do corpo discente")
-    ca2.metric("MÉDIA GERAL 1ª ETAPA", f"{{df_adaptados['final_1'].mean():.2f}}")
-    ca3.metric("MÉDIA GERAL 2ª ETAPA", f"{{df_adaptados['final_2'].mean():.2f}}", f"{{df_adaptados['final_2'].mean() - df_adaptados['final_1'].mean():+.2f}} pts")
+    ca2.metric("MÉDIA GERAL 1ª ETAPA", f"{df_adaptados['final_1'].mean():.2f}")
+    ca3.metric("MÉDIA GERAL 2ª ETAPA", f"{df_adaptados['final_2'].mean():.2f}", f"{df_adaptados['final_2'].mean() - df_adaptados['final_1'].mean():+.2f} pts")
     ca4.metric("ALUNOS EM RP (2ª ETAPA)", df_adaptados[df_adaptados['em_rp_2']]['aluno'].nunique())
     
     st.markdown("---")
@@ -259,15 +259,15 @@ with tabs[2]:
     with col_ad1:
         st.markdown("### **Quadro de Estudantes com Atendimento Adaptado por Turma**")
         st.dataframe(
-            df_dist_adapt.rename(columns={{
+            df_dist_adapt.rename(columns={
                 'turma': 'Turma',
                 'total_alunos': 'Alunos Adaptados',
                 'media_1': 'Média 1ª Etapa',
                 'media_2': 'Média 2ª Etapa'
-            }}).style.format({{
-                'Média 1ª Etapa': '{{:.2f}}',
-                'Média 2ª Etapa': '{{:.2f}}'
-            }}),
+            }).style.format({
+                'Média 1ª Etapa': '{:.2f}',
+                'Média 2ª Etapa': '{:.2f}'
+            }),
             use_container_width=True
         )
         
@@ -288,14 +288,14 @@ with tabs[3]:
     st.subheader(f"📈 Eficiência da Recuperação Paralela (Acompanhamento dos Alunos) — {etapa_sel}")
     
     df_efic_turma = df_filtered.groupby('turma').agg(total_alunos=('aluno', 'nunique')).reset_index()
-    al_rp = df_filtered[df_filtered[col_em_rp if not is_comparativo else 'em_rp_2']].groupby('turma')['aluno'].nunique().reset_index().rename(columns={{'aluno': 'alunos_rp'}})
+    al_rp = df_filtered[df_filtered[col_em_rp if not is_comparativo else 'em_rp_2']].groupby('turma')['aluno'].nunique().reset_index().rename(columns={'aluno': 'alunos_rp'})
     
     al_rec = df_filtered.groupby(['turma', 'aluno']).agg(
         tot_rp=(col_em_rp if not is_comparativo else 'em_rp_2', 'sum'),
         perm=(col_perm if not is_comparativo else 'permaneceu_2', 'sum')
     ).reset_index()
     
-    al_rec_tot = al_rec[(al_rec['tot_rp'] > 0) & (al_rec['perm'] == 0)].groupby('turma')['aluno'].nunique().reset_index().rename(columns={{'aluno': 'alunos_recuperados'}})
+    al_rec_tot = al_rec[(al_rec['tot_rp'] > 0) & (al_rec['perm'] == 0)].groupby('turma')['aluno'].nunique().reset_index().rename(columns={'aluno': 'alunos_recuperados'})
     
     df_efic_turma = pd.merge(df_efic_turma, al_rp, on='turma', how='left').fillna(0)
     df_efic_turma = pd.merge(df_efic_turma, al_rec_tot, on='turma', how='left').fillna(0)
@@ -304,13 +304,13 @@ with tabs[3]:
     c_ef1, c_ef2 = st.columns([3, 2])
     with c_ef1:
         st.dataframe(
-            df_efic_turma.rename(columns={{
+            df_efic_turma.rename(columns={
                 'turma': 'Turma',
                 'total_alunos': 'Total Alunos',
                 'alunos_rp': 'Alunos em RP',
                 'alunos_recuperados': 'Alunos Recuperados 100%',
                 'pct_reversao': '% Taxa Reversão'
-            }}).style.format({{'% Taxa Reversão': '{{:.1f}}%'}}),
+            }).style.format({'% Taxa Reversão': '{:.1f}%'}),
             use_container_width=True
         )
     with c_ef2:
@@ -338,13 +338,13 @@ with tabs[4]:
     df_disc_turma['pct_alunos_rp'] = (df_disc_turma['alunos_rp'] / df_disc_turma['alunos']) * 100
     
     st.dataframe(
-        df_disc_turma.rename(columns={{
+        df_disc_turma.rename(columns={
             'turma': 'Turma', 'disciplina': 'Disciplina', 'alunos': 'Total Alunos',
             'media_original': 'Média Orig.', 'media_final': 'Média Final',
             'alunos_rp': 'Alunos em RP', 'pct_alunos_rp': '% Alunos RP'
-        }}).style.format({{
-            'Média Orig.': '{{:.2f}}', 'Média Final': '{{:.2f}}', '% Alunos RP': '{{:.1f}}%'
-        }}),
+        }).style.format({
+            'Média Orig.': '{:.2f}', 'Média Final': '{:.2f}', '% Alunos RP': '{:.1f}%'
+        }),
         use_container_width=True
     )
 
@@ -366,14 +366,14 @@ with tabs[5]:
         c_r1, c_r2, c_r3 = st.columns(3)
         c_r1.metric("ALUNOS EM RISCO CRÍTICO", len(st_risco), "3+ matérias < 5,0")
         c_r2.metric("MAIOR Nº DE DISCIPLINAS CRÍTICAS", st_risco['disciplinas_abaixo5'].max(), "matérias")
-        c_r3.metric("MÉDIA DO GRUPO DE RISCO", f"{{st_risco['media_final'].mean():.2f}}")
+        c_r3.metric("MÉDIA DO GRUPO DE RISCO", f"{st_risco['media_final'].mean():.2f}")
         
         st.markdown("---")
         st.dataframe(
-            st_risco.rename(columns={{
+            st_risco.rename(columns={
                 'aluno': 'Aluno', 'turma': 'Turma', 'tipo_avaliacao': 'Modalidade Avaliação',
                 'disciplinas_abaixo5': 'Disciplinas < 5,0', 'media_final': 'Média Final'
-            }}).style.format({{'Média Final': '{{:.2f}}'}}),
+            }).style.format({'Média Final': '{:.2f}'}),
             use_container_width=True
         )
     else:
@@ -398,10 +398,10 @@ with tabs[6]:
     col_rk1, col_rk2 = st.columns([3, 2])
     with col_rk1:
         st.dataframe(
-            df_rank_disc.rename(columns={{
+            df_rank_disc.rename(columns={
                 'disciplina': 'Disciplina', 'alunos': 'Total Alunos',
                 'media_final': 'Média Final', 'alunos_rp': 'Alunos em RP', 'pct_alunos_rp': '% Alunos RP'
-            }}).style.format({{'Média Final': '{{:.2f}}', '% Alunos RP': '{{:.1f}}%'}}),
+            }).style.format({'Média Final': '{:.2f}', '% Alunos RP': '{:.1f}%'}),
             use_container_width=True
         )
     with col_rk2:
@@ -431,15 +431,15 @@ with tabs[7]:
         
         badge_html = '<span class="badge-adaptado">🌟 Atendimento & Avaliação Adaptada</span>' if tipo_av_st == 'Adaptada' else '<span class="badge-convencional">📘 Avaliação Convencional</span>'
         
-        st.markdown(f"### **Estudante:** `{aluno_busca}` | **Turma:** `{turma_st}` | {{badge_html}}", unsafe_allow_html=True)
+        st.markdown(f"### **Estudante:** `{aluno_busca}` | **Turma:** `{turma_st}` | {badge_html}", unsafe_allow_html=True)
         
         m1_st = df_st_data['final_1'].mean()
         m2_st = df_st_data['final_2'].mean()
         diff_st = m2_st - m1_st
         
         c_st1, c_st2, c_st3, c_st4 = st.columns(4)
-        c_st1.metric("Média Geral (1ª Etapa)", f"{{m1_st:.2f}}")
-        c_st2.metric("Média Geral (2ª Etapa)", f"{{m2_st:.2f}}", f"{{diff_st:+.2f}} pts")
+        c_st1.metric("Média Geral (1ª Etapa)", f"{m1_st:.2f}")
+        c_st2.metric("Média Geral (2ª Etapa)", f"{m2_st:.2f}", f"{diff_st:+.2f} pts")
         c_st3.metric("Disciplinas em RP (2ª Etapa)", df_st_data['em_rp_2'].sum())
         c_st4.metric("Disciplinas < 5,0 (2ª Etapa)", df_st_data['abaixo5_2'].sum(), delta_color="inverse")
         
@@ -447,9 +447,9 @@ with tabs[7]:
         fig_st_bar = px.bar(
             df_st_data, x='disciplina', y=['final_1', 'final_2'],
             barmode='group', text_auto='.2f',
-            title=f"Boletim Comparativo por Disciplina (1ª vs 2ª Etapa): {{aluno_busca}}",
-            labels={{'value': 'Nota Final', 'variable': 'Etapa', 'disciplina': 'Disciplina'}},
-            color_discrete_map={{'final_1': '#64748B', 'final_2': '#0033CC'}}
+            title=f"Boletim Comparativo por Disciplina (1ª vs 2ª Etapa): {aluno_busca}",
+            labels={'value': 'Nota Final', 'variable': 'Etapa', 'disciplina': 'Disciplina'},
+            color_discrete_map={'final_1': '#64748B', 'final_2': '#0033CC'}
         )
         fig_st_bar.add_shape(type="line", x0=-0.5, x1=len(df_st_data)-0.5, y0=7.0, y1=7.0, line=dict(color="Green", width=2, dash="dash"))
         fig_st_bar.add_shape(type="line", x0=-0.5, x1=len(df_st_data)-0.5, y0=5.0, y1=5.0, line=dict(color="Red", width=2, dash="dash"))
@@ -457,16 +457,16 @@ with tabs[7]:
         st.plotly_chart(fig_st_bar, use_container_width=True)
         
         st.dataframe(
-            df_st_data[['disciplina', 'tipo_avaliacao', 'media_1', 'rp_1', 'final_1', 'media_2', 'rp_2', 'final_2', 'evolucao_nota']].rename(columns={{
+            df_st_data[['disciplina', 'tipo_avaliacao', 'media_1', 'rp_1', 'final_1', 'media_2', 'rp_2', 'final_2', 'evolucao_nota']].rename(columns={
                 'disciplina': 'Disciplina', 'tipo_avaliacao': 'Modalidade Avaliação',
                 'media_1': 'Média Orig. 1ª', 'rp_1': 'RP 1ª', 'final_1': 'Final 1ª',
                 'media_2': 'Média Orig. 2ª', 'rp_2': 'RP 2ª', 'final_2': 'Final 2ª',
                 'evolucao_nota': 'Evolução (2ª - 1ª)'
-            }}).style.format({{
-                'Média Orig. 1ª': '{{:.2f}}', 'RP 1ª': '{{:.2f}}', 'Final 1ª': '{{:.2f}}',
-                'Média Orig. 2ª': '{{:.2f}}', 'RP 2ª': '{{:.2f}}', 'Final 2ª': '{{:.2f}}',
-                'Evolução (2ª - 1ª)': '{{:+:.2f}}'
-            }}),
+            }).style.format({
+                'Média Orig. 1ª': '{:.2f}', 'RP 1ª': '{:.2f}', 'Final 1ª': '{:.2f}',
+                'Média Orig. 2ª': '{:.2f}', 'RP 2ª': '{:.2f}', 'Final 2ª': '{:.2f}',
+                'Evolução (2ª - 1ª)': '{:+:.2f}'
+            }),
             use_container_width=True
         )
 
