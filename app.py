@@ -465,7 +465,7 @@ with tabs[7]:
             }).style.format({
                 'Média Orig. 1ª': '{:.2f}', 'RP 1ª': '{:.2f}', 'Final 1ª': '{:.2f}',
                 'Média Orig. 2ª': '{:.2f}', 'RP 2ª': '{:.2f}', 'Final 2ª': '{:.2f}',
-                'Evolução (2ª - 1ª)': '{:+:.2f}'
+                'Evolução (2ª - 1ª)': ('{:+.2f}').format
             }),
             use_container_width=True
         )
