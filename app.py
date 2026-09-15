@@ -218,7 +218,7 @@ with tabs[1]:
                 'Média 2ª Etapa' if is_comparativo else 'Média Final': '{:.2f}',
                 '% Alunos em RP': '{:.1f}%'
             }),
-            use_container_width=True
+            hide_index=True, use_container_width=True
         )
         
     with col_diag2:
@@ -268,7 +268,7 @@ with tabs[2]:
                 'Média 1ª Etapa': '{:.2f}',
                 'Média 2ª Etapa': '{:.2f}'
             }),
-            use_container_width=True
+            hide_index=True, use_container_width=True
         )
         
     with col_ad2:
@@ -311,7 +311,7 @@ with tabs[3]:
                 'alunos_recuperados': 'Alunos Recuperados 100%',
                 'pct_reversao': '% Taxa Reversão'
             }).style.format({'% Taxa Reversão': '{:.1f}%'}),
-            use_container_width=True
+            hide_index=True, use_container_width=True
         )
     with c_ef2:
         fig_reversao = px.bar(
@@ -345,7 +345,7 @@ with tabs[4]:
         }).style.format({
             'Média Orig.': '{:.2f}', 'Média Final': '{:.2f}', '% Alunos RP': '{:.1f}%'
         }),
-        use_container_width=True
+        hide_index=True, use_container_width=True
     )
 
 # ==========================================
@@ -374,7 +374,7 @@ with tabs[5]:
                 'aluno': 'Aluno', 'turma': 'Turma', 'tipo_avaliacao': 'Modalidade Avaliação',
                 'disciplinas_abaixo5': 'Disciplinas < 5,0', 'media_final': 'Média Final'
             }).style.format({'Média Final': '{:.2f}'}),
-            use_container_width=True
+            hide_index=True, use_container_width=True
         )
     else:
         st.success("🎉 Nenhum aluno encontra-se na faixa de risco crítico para a seleção efetuada!")
