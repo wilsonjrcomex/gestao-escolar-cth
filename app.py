@@ -124,7 +124,7 @@ tabs = st.tabs([
 with tabs[0]:
     st.subheader(f"📊 Resumo Executivo do Desempenho dos Alunos — {etapa_sel}")
     
-    tot_alunos = 163 if (turma_sel == "Todas as Turmas" and modalidade_sel == "Todos os Estudantes") else df_filtered['aluno'].nunique()
+    tot_alunos = df_filtered['aluno'].nunique()
     tot_adaptados = df_filtered[df_filtered['is_adaptado']]['aluno'].nunique()
     
     if is_comparativo:
@@ -421,7 +421,7 @@ with tabs[7]:
     st.subheader("👤 Ficha Técnica e Diagnóstico Individual do Estudante")
     
     st_lista = sorted(df_boletim_full['aluno'].unique().tolist())
-    aluno_busca = st.selectbox("Selecione o Estudante para Consulta (Total Oficial de 163 Alunos)", st_lista)
+    aluno_busca = st.selectbox("Selecione o Estudante para Consulta", st_lista)
     
     df_st_data = df_boletim_full[df_boletim_full['aluno'] == aluno_busca].copy()
     
